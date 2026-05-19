@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default async function OverseerDashboard() {
   const response = await getPendingBriefsAction();
-  const pendingBriefs = (Array.isArray(response) ? response : []) as any[];
+  const pendingBriefs = (Array.isArray(response) ? response : []) as { id: string; title: string; status: string }[];
 
   return (
     <div className="container mx-auto py-10 space-y-8">
@@ -24,7 +24,7 @@ export default async function OverseerDashboard() {
             {pendingBriefs.length === 0 ? (
               <p className="text-sm text-muted-foreground">No briefs currently pending approval.</p>
             ) : (
-              pendingBriefs.map((brief: any) => (
+              pendingBriefs.map((brief) => (
                 <div key={brief.id} className="flex justify-between items-center p-3 border rounded-md">
                   <div>
                     <span className="font-semibold block">{brief.title}</span>

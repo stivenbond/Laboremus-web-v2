@@ -30,7 +30,7 @@ async function runWithAuth<A, E>(effect: Effect.Effect<A, E, CurrentUser | Docum
     CurrentUser,
     CurrentUser.of({
       id: session.user.id,
-      role: (session.user as any).role || "writer"
+      role: (session.user as { role?: string }).role || "writer"
     })
   );
 
@@ -39,9 +39,10 @@ async function runWithAuth<A, E>(effect: Effect.Effect<A, E, CurrentUser | Docum
   
   try {
     return await runtime.runPromise(runnable);
-  } catch (err: any) {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "An unknown error occurred";
     // Return serializable error for Next.js
-    return { success: false, error: err.message || "An unknown error occurred" };
+    return { success: false, error: message };
   }
 }
 
@@ -51,7 +52,7 @@ export async function fetchUsersByRoleAction(role: string) {
   return runWithAuth(Effect.gen(function* (_) {
     // Basic Drizzle query wrapped inside Effect
     const results = yield* _(Effect.promise(() => 
-      db.select().from(users).where(eq(users.role, role as any))
+      db.select().from(users).where(eq(users.role, role as 'admin' | 'editor-in-chief' | 'overseer' | 'writer' | 'editor' | 'formatter' | 'publisher' | 'approver'))
     ));
     return results;
   }));
@@ -147,7 +148,7 @@ export async function approveForPublishingAction(documentId: string) {
   }));
 }
 
-export async function rejectPublishedAction(documentId: string, comment: string) {
+export async function rejectPublishedAction(documentId: string, _comment: string) {
   return runWithAuth(Effect.gen(function* (_) {
     yield* _(requireRole(["approver", "overseer"]));
     yield* _(Effect.promise(() =>
@@ -157,6 +158,7 @@ export async function rejectPublishedAction(documentId: string, comment: string)
       }).where(eq(documents.id, documentId))
     ));
     // Comment is saved separately by caller if needed via reviewDocumentAction
+    void _comment;
     return { success: true };
   }));
 }

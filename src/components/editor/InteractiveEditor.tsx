@@ -6,10 +6,15 @@ import { saveDraftAction, commitVersionAction, analyzeDocumentAction } from '@/a
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
+interface Recommendation {
+  suggestion: string;
+  severity: string;
+}
+
 export default function InteractiveEditor({ documentId, initialContent }: { documentId: string, initialContent: string }) {
   const [content, setContent] = useState(initialContent);
   const [isSaving, setIsSaving] = useState(false);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
 
   // Autosave Draft
   useEffect(() => {

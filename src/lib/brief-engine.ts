@@ -17,8 +17,8 @@ export interface BriefAssignment {
 export class BriefEngine extends Context.Tag("BriefEngine")<
   BriefEngine,
   {
-    createBriefs: (assignments: BriefAssignment[]) => Effect.Effect<any, Error, CurrentUser | DocumentEngine | NotificationEngine>;
-    approveBrief: (briefId: string) => Effect.Effect<any, Error, CurrentUser | DocumentEngine | NotificationEngine>;
+    createBriefs: (assignments: BriefAssignment[]) => Effect.Effect<{ success: boolean; createdBriefs: { id: string; title: string }[] }, Error, CurrentUser | DocumentEngine | NotificationEngine>;
+    approveBrief: (briefId: string) => Effect.Effect<{ success: boolean }, Error, CurrentUser | DocumentEngine | NotificationEngine>;
   }
 >() {}
 

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { reassignDocumentAction } from "@/app/actions";
 
-const STATUS_COLORS: Record<string, string> = {
+const STATUS_COLORS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   draft: "secondary",
   in_review: "default",
   approved: "default",
@@ -19,8 +19,7 @@ const STATUS_COLORS: Record<string, string> = {
 export default async function EICDashboard() {
   // Live pipeline — all documents
   const allDocs = await db.select().from(documents);
-  const writers = (await db.select().from(users)) as any[];
-  const editors = writers; // same pool, different role filter done in UI
+  const writers = await db.select().from(users);
 
   return (
     <div className="container mx-auto py-10 space-y-8">
@@ -45,7 +44,7 @@ export default async function EICDashboard() {
               <div key={doc.id} className="border rounded-md p-4 space-y-3">
                 <div className="flex justify-between items-start">
                   <p className="font-semibold">{doc.title}</p>
-                  <Badge variant={(STATUS_COLORS[doc.status] as any) ?? "outline"}>
+                  <Badge variant={STATUS_COLORS[doc.status] ?? "outline"}>
                     {doc.status.replace(/_/g, " ")}
                   </Badge>
                 </div>

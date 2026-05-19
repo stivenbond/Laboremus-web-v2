@@ -1,6 +1,6 @@
 import { Effect, Context, Layer } from "effect";
 import { db } from "@/db";
-import { documents, documentDrafts, documentVersions, documentComments, documentStatusEnum } from "@/db/schema";
+import { documents, documentDrafts, documentVersions, documentComments } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { CurrentUser, requireRole } from "./auth-context";
 import { NotificationEngine } from "./notifications";
@@ -9,10 +9,10 @@ import { NotificationEngine } from "./notifications";
 export class DocumentEngine extends Context.Tag("DocumentEngine")<
   DocumentEngine,
   {
-    saveDraft: (documentId: string, content: string) => Effect.Effect<any, Error, CurrentUser>;
-    commitVersion: (documentId: string, message: string) => Effect.Effect<any, Error, CurrentUser>;
-    submitForReview: (documentId: string) => Effect.Effect<any, Error, CurrentUser>;
-    reviewDocument: (documentId: string, approve: boolean, comment?: string) => Effect.Effect<any, Error, CurrentUser | NotificationEngine>;
+    saveDraft: (documentId: string, content: string) => Effect.Effect<{ success: boolean }, Error, CurrentUser>;
+    commitVersion: (documentId: string, message: string) => Effect.Effect<{ success: boolean }, Error, CurrentUser>;
+    submitForReview: (documentId: string) => Effect.Effect<{ success: boolean }, Error, CurrentUser>;
+    reviewDocument: (documentId: string, approve: boolean, comment?: string) => Effect.Effect<{ success: boolean }, Error, CurrentUser | NotificationEngine>;
   }
 >() {}
 

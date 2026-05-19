@@ -7,18 +7,17 @@ import path from 'path';
 import { Effect, Layer } from 'effect';
 
 describe('End-to-End Editorial Workflow', () => {
-  let container: any;
-  let dbClient: any;
-  let db: any;
+  let container: Awaited<ReturnType<PostgreSqlContainer['start']>>;
+  let dbClient: ReturnType<typeof postgres>;
+  let db: ReturnType<typeof drizzle>;
 
   // Environment variables and roles setup
-  let EicLayer: any;
-  let OverseerLayer: any;
-  let WriterLayer: any;
-  let EditorLayer: any;
-  let PublisherLayer: any;
-  let ApproverLayer: any;
-  let MainLayer: any;
+  let EicLayer: Layer.Layer<unknown, never, never>;
+  let OverseerLayer: Layer.Layer<unknown, never, never>;
+  let WriterLayer: Layer.Layer<unknown, never, never>;
+  let EditorLayer: Layer.Layer<unknown, never, never>;
+  let PublisherLayer: Layer.Layer<unknown, never, never>;
+  let MainLayer: Layer.Layer<unknown, never, never>;
 
   beforeAll(async () => {
     // 1. Spin up a fresh PostgreSql testcontainer
@@ -62,7 +61,6 @@ describe('End-to-End Editorial Workflow', () => {
     WriterLayer = Layer.succeed(CurrentUser, CurrentUser.of({ id: "writer-1", role: "writer" }));
     EditorLayer = Layer.succeed(CurrentUser, CurrentUser.of({ id: "editor-1", role: "editor" }));
     PublisherLayer = Layer.succeed(CurrentUser, CurrentUser.of({ id: "publisher-1", role: "publisher" }));
-    ApproverLayer = Layer.succeed(CurrentUser, CurrentUser.of({ id: "approver-1", role: "approver" }));
 
     // 6. Build the live app domain dependency layer
     const NotificationLive = NotificationDbWriterLive.pipe(Layer.provide(NotificationEngineLive));
@@ -87,8 +85,12 @@ describe('End-to-End Editorial Workflow', () => {
   });
 
   // Runner helper
-  const runAs = (effect: any, userLayer: any) => {
-    const runnable = effect.pipe(
+  const runAs = <A, E, R>(
+    effect: Effect.Effect<A, E, R>,
+    userLayer: Layer.Layer<unknown, never, never>
+  ) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const runnable = (effect as any).pipe(
       Effect.provide(MainLayer),
       Effect.provide(userLayer)
     );

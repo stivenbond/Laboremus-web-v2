@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { documents } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { schedulePublishingAction } from "@/app/actions";

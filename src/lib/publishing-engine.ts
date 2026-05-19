@@ -1,10 +1,10 @@
-import { Effect, Schedule, Layer } from "effect";
+import { Effect, Schedule } from "effect";
 import { db } from "@/db";
 import { documents } from "@/db/schema";
 import { and, eq, lte } from "drizzle-orm";
 
 export class PublishingEngine extends Effect.Service<PublishingEngine>()("PublishingEngine", {
-  effect: Effect.gen(function* (_) {
+  effect: Effect.gen(function* () {
     const publishDue = Effect.gen(function* (_) {
       const now = new Date();
       // Find all docs scheduled for a time in the past that haven't published yet

@@ -8,7 +8,7 @@ interface FormatterEditorProps {
   initialContent: string;
 }
 
-export default function FormatterEditor({ documentId, initialContent }: FormatterEditorProps) {
+export default function FormatterEditor({ initialContent }: FormatterEditorProps) {
   const [content, setContent] = useState(initialContent);
 
   return (

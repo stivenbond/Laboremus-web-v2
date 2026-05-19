@@ -22,7 +22,7 @@ export const NotificationDbWriterLive = Layer.effect(
               db.insert(notifications).values({
                 id: crypto.randomUUID(),
                 userId: event.userId,
-                type: event.type as any,
+                type: event.type as 'ASSIGNMENT' | 'APPROVAL' | 'REJECTION' | 'REVIEW_REQUEST' | 'PUBLISH' | 'SYSTEM',
                 message: event.message,
                 createdAt: event.timestamp,
                 read: false,

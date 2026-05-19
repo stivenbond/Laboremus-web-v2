@@ -19,7 +19,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const { data, error } = await signIn.email({
+      const { error } = await signIn.email({
         email,
         password,
       });
@@ -29,8 +29,9 @@ export default function LoginPage() {
       } else {
         window.location.href = '/admin'; // basic redirect for now
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(message);
     } finally {
       setLoading(false);
     }

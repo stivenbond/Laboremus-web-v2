@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { runtime } from "@/lib/effect-runtime";
 import { NotificationEngine } from "@/lib/notifications";
-import { Effect, Queue, Stream } from "effect";
+import { Effect, Queue } from "effect";
 
 export const dynamic = "force-dynamic";
 

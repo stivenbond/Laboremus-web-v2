@@ -1,4 +1,4 @@
-import { Effect, Context, Layer, Queue, PubSub, Fiber } from "effect";
+import { Effect, Context, Layer, Queue, PubSub } from "effect";
 
 export interface NotificationEvent {
   type: "ASSIGNMENT" | "APPROVAL" | "REJECTION" | "SYSTEM";

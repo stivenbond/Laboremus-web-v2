@@ -5,9 +5,9 @@ import postgres from 'postgres';
 import { sql } from 'drizzle-orm';
 
 describe('Database Integration', () => {
-  let container: any;
-  let db: any;
-  let client: any;
+  let container: Awaited<ReturnType<PostgreSqlContainer['start']>>;
+  let db: ReturnType<typeof drizzle>;
+  let client: ReturnType<typeof postgres>;
 
   beforeAll(async () => {
     container = await new PostgreSqlContainer('postgres:16-alpine').start();

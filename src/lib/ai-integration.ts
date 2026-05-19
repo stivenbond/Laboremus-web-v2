@@ -77,7 +77,7 @@ export const AIIntegrationLive = Layer.succeed(
         // Parse result safely
         const parsed: AIRecommendation[] = JSON.parse(text.substring(text.indexOf("["), text.lastIndexOf("]") + 1));
         return parsed;
-      } catch (err) {
+      } catch {
         return yield* _(Effect.fail(new Error("External AI REST API call failed.")));
       }
     })

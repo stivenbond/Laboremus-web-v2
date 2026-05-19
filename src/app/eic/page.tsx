@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { db } from "@/db";
 import { documents, users } from "@/db/schema";
 import { Badge } from "@/components/ui/badge";

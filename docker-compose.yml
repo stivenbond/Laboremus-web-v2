@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://laboremus_user:laboremus_password@db:5432/laboremus
+    depends_on:
+      - db
+    
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: laboremus_user
+      POSTGRES_PASSWORD: laboremus_password
+      POSTGRES_DB: laboremus
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

@@ -2,13 +2,14 @@ import { Layer, ManagedRuntime } from "effect";
 import { layerEmpty as NodeSdkLive } from "@effect/opentelemetry/NodeSdk";
 
 import { NotificationEngineLive } from "./notifications";
+import { NotificationDbWriterLive } from "./notifications-db";
 import { DocumentEngineLive } from "./document-engine";
 import { BriefEngineLive } from "./brief-engine";
 import { AIIntegrationLive } from "./ai-integration";
 import { MockAdminLayer } from "./auth-context";
 import { PublishingEngine } from "./publishing-engine";
 
-const NotificationLive = NotificationEngineLive;
+const NotificationLive = NotificationDbWriterLive.pipe(Layer.provide(NotificationEngineLive));
 const DocumentLive = DocumentEngineLive.pipe(Layer.provide(NotificationLive));
 const BriefLive = BriefEngineLive.pipe(
   Layer.provide(DocumentLive),

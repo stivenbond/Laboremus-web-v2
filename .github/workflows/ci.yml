@@ -26,13 +26,13 @@ jobs:
         cache: 'npm'
         
     - name: Install dependencies
-      run: npm ci
+      run: npm ci || npm install
       
     - name: Lint
       run: npm run lint
       
     - name: Type Check
-      run: npx tsc --noEmit
+      run: npm run type-check
       
     - name: Run Integration Tests
       run: npm run test
@@ -40,5 +40,8 @@ jobs:
     - name: Build Next.js Application
       run: npm run build
       env:
-        # Dummy DB URL for build time if required
         DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
+        BETTER_AUTH_SECRET: "local_better_auth_dev_secret_32_chars_long"
+        BETTER_AUTH_URL: "http://localhost:3000"
+        CRON_SECRET: "super_secret_cron_job_auth_token_value"
+        AI_MODEL: "gemini-1.5-flash"

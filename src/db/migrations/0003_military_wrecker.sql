@@ -1,0 +1,1 @@
+ALTER TABLE "document_draft" ADD CONSTRAINT "document_draft_documentId_authorId_unique" UNIQUE("documentId","authorId");

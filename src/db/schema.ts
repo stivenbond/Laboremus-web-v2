@@ -1,4 +1,4 @@
-import { boolean, pgEnum, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, pgEnum, pgTable, serial, text, timestamp, unique } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum('role', [
   'admin', 
@@ -72,7 +72,9 @@ export const documentDrafts = pgTable("document_draft", {
   content: text("content").notNull(), // Tiptap JSON or Markdown
   authorId: text("authorId").notNull().references(() => users.id),
   lastSavedAt: timestamp("lastSavedAt").notNull().defaultNow(),
-});
+}, (t) => [
+  unique().on(t.documentId, t.authorId)
+]);
 
 export const documentVersions = pgTable("document_version", {
   id: text("id").primaryKey(),

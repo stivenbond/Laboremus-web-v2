@@ -6,7 +6,9 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Suppress the Turbopack/webpack conflict warning from @ducanh2912/next-pwa.
+  // The app works fine under Turbopack with no custom configuration.
+  turbopack: {},
 };
 
 export default withPWA(nextConfig);

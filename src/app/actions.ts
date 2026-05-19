@@ -30,7 +30,7 @@ async function runWithAuth<A, E>(effect: Effect.Effect<A, E, CurrentUser | Docum
     CurrentUser,
     CurrentUser.of({
       id: session.user.id,
-      role: (session.user as { role?: string }).role || "writer"
+      role: (session.user as { role?: "admin" | "editor-in-chief" | "overseer" | "writer" | "editor" | "formatter" | "publisher" | "approver" }).role || "writer"
     })
   );
 

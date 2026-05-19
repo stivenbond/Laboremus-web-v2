@@ -5,6 +5,12 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 import path from 'path';
 import { Effect, Layer } from 'effect';
+import type { CurrentUser } from '../lib/auth-context';
+import type { NotificationEngine } from '../lib/notifications';
+import type { DocumentEngine } from '../lib/document-engine';
+import type { BriefEngine } from '../lib/brief-engine';
+import type { AIIntegration } from '../lib/ai-integration';
+import type { PublishingEngine } from '../lib/publishing-engine';
 
 describe('End-to-End Editorial Workflow', () => {
   let container: Awaited<ReturnType<PostgreSqlContainer['start']>>;
@@ -12,12 +18,12 @@ describe('End-to-End Editorial Workflow', () => {
   let db: ReturnType<typeof drizzle>;
 
   // Environment variables and roles setup
-  let EicLayer: Layer.Layer<unknown, never, never>;
-  let OverseerLayer: Layer.Layer<unknown, never, never>;
-  let WriterLayer: Layer.Layer<unknown, never, never>;
-  let EditorLayer: Layer.Layer<unknown, never, never>;
-  let PublisherLayer: Layer.Layer<unknown, never, never>;
-  let MainLayer: Layer.Layer<unknown, never, never>;
+  let EicLayer: Layer.Layer<CurrentUser, never, never>;
+  let OverseerLayer: Layer.Layer<CurrentUser, never, never>;
+  let WriterLayer: Layer.Layer<CurrentUser, never, never>;
+  let EditorLayer: Layer.Layer<CurrentUser, never, never>;
+  let PublisherLayer: Layer.Layer<CurrentUser, never, never>;
+  let MainLayer: Layer.Layer<NotificationEngine | DocumentEngine | BriefEngine | AIIntegration | PublishingEngine, never, never>;
 
   beforeAll(async () => {
     // 1. Spin up a fresh PostgreSql testcontainer
@@ -87,8 +93,8 @@ describe('End-to-End Editorial Workflow', () => {
   // Runner helper
   const runAs = <A, E, R>(
     effect: Effect.Effect<A, E, R>,
-    userLayer: Layer.Layer<unknown, never, never>
-  ) => {
+    userLayer: Layer.Layer<CurrentUser, never, never>
+  ): Promise<A> => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const runnable = (effect as any).pipe(
       Effect.provide(MainLayer),

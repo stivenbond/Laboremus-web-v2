@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // Revalidate at most once every hour
 
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -19,8 +19,13 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogIndex() {
-  // Fetch live published documents from the database
-  const posts = await db.select().from(documents).where(eq(documents.status, 'published'));
+  // Fetch live published documents from the database with robust fallback for build environment
+  let posts: (typeof documents.$inferSelect)[] = [];
+  try {
+    posts = await db.select().from(documents).where(eq(documents.status, 'published'));
+  } catch (error) {
+    console.warn("Database offline during build/render fallback. Serving empty posts list:", error);
+  }
 
   return (
     <div className="container mx-auto py-12 space-y-8">

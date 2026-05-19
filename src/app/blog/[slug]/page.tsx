@@ -1,11 +1,7 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // Revalidate at most once every hour
 
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-
-interface Props {
-  params: Promise<{ slug: string }>
-}
 
 import { db } from "@/db";
 import { documents, documentVersions } from "@/db/schema";
@@ -20,10 +16,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const id = resolvedParams.slug;
   
-  const docs = await db.select().from(documents).where(eq(documents.id, id));
-  const doc = docs[0];
+  let doc = null;
+  try {
+    const docs = await db.select().from(documents).where(eq(documents.id, id));
+    doc = docs[0];
+  } catch (error) {
+    console.warn("Database offline during generateMetadata build:", error);
+  }
   
-  const title = doc ? doc.title : "Article Not Found";
+  const title = doc ? doc.title : "Article";
   const description = `Read this amazing publication on Laboremus: ${title}.`;
 
   return {
@@ -43,18 +44,27 @@ export default async function BlogPost({ params }: Props) {
   
   if (!id) return notFound();
 
-  // Load document
-  const docs = await db.select().from(documents).where(eq(documents.id, id));
-  const doc = docs[0];
+  let doc = null;
+  let content = "<p>This article does not have any content yet.</p>";
+
+  try {
+    // Load document
+    const docs = await db.select().from(documents).where(eq(documents.id, id));
+    doc = docs[0];
+
+    if (doc) {
+      // Load latest version content
+      const versions = await db.select().from(documentVersions)
+        .where(eq(documentVersions.documentId, id))
+        .orderBy(desc(documentVersions.createdAt))
+        .limit(1);
+      content = versions[0]?.content || "<p>This article does not have any content yet.</p>";
+    }
+  } catch (error) {
+    console.warn("Database offline during BlogPost build:", error);
+  }
 
   if (!doc) return notFound();
-
-  // Load latest version content
-  const versions = await db.select().from(documentVersions)
-    .where(eq(documentVersions.documentId, id))
-    .orderBy(desc(documentVersions.createdAt))
-    .limit(1);
-  const content = versions[0]?.content || "<p>This article does not have any content yet.</p>";
 
   return (
     <article className="container mx-auto py-12 max-w-3xl">
